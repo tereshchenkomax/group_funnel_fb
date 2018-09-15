@@ -1,28 +1,25 @@
--"use strict";
+"use strict";
 
 (function () {
 	//document.body.dataset.new_full_url = chrome.extension.getURL('salestools.html#' + document.location);
 	var activeHash;
 
-	function run(url, type) {
-      parse(url, type);
+	function run(url) {
+      parse(url);
 	};
 
-	function parse(url, type) {
+	function parse(url) {
 		var parser = new Parser();
-		var data = parser.runParse(url, document, type);
+		var data = parser.runParse(url, document);
 
 		data.then(data => {
       console.log('data.length', data.length);
-      chrome.runtime.sendMessage({"message": "SEND_DATA", data})
+      chrome.runtime.sendMessage({ "message": "SEND_DATA", data })
     });
 	}
 
 	chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-		if (request.message === "send_page_url") {
-			if (request.activeHash != undefined) {
-				activeHash = request.activeHash
-			}
+		if (request.message === "run") {
 			run(request.url);
 		}
 		if (request.message === "target_tab") {

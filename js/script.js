@@ -177,31 +177,28 @@ answerRecord.prototype.toObject = function () {
   };
 };
 
--"use strict";
+"use strict";
 
 (function () {
 	//document.body.dataset.new_full_url = chrome.extension.getURL('salestools.html#' + document.location);
 	var activeHash;
 
-	function run(url, type) {
-      parse(url, type);
+	function run(url) {
+      parse(url);
 	};
 
-	function parse(url, type) {
+	function parse(url) {
 		var parser = new Parser();
-		var data = parser.runParse(url, document, type);
+		var data = parser.runParse(url, document);
 
 		data.then(data => {
       console.log('data.length', data.length);
-      chrome.runtime.sendMessage({"message": "SEND_DATA", data})
+      chrome.runtime.sendMessage({ "message": "SEND_DATA", data })
     });
 	}
 
 	chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-		if (request.message === "send_page_url") {
-			if (request.activeHash != undefined) {
-				activeHash = request.activeHash
-			}
+		if (request.message === "run") {
 			run(request.url);
 		}
 		if (request.message === "target_tab") {
@@ -250,8 +247,9 @@ class CommonParser {
   }
 }
 class Parser extends CommonParser{
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+        console.log('props', props);
         this.state = {
           currUrl: null,
           groupName: null,
@@ -264,7 +262,7 @@ class Parser extends CommonParser{
         this.state.currUrl = path;
         this.state.groupName = document.evaluate("normalize-space(//*[contains(@id, 'mainContainer')]//a[contains(@href, 'groups')]/text())", document, null, XPathResult.STRING_TYPE, null).stringValue;
         //return this.getList(".//*[contains(@id, 'member_requests_pagelet')]//div/div/ul[contains(@class, 'uiList')]/li[not(@class)]/div[contains(@direction, 'left') or contains(@direction, 'right')]", document)
-        return this.getList(".//*[contains(@id, 'member_requests_pagelet')]//div/div/ul[contains(@class, 'uiList')]/li[not(@class)]/div[contains(@direction, 'left') or contains(@direction, 'right')]/div/div/div/div[last()]/ul/li[not(i)]", document)
+        return this.getList(".//*[contains(@id, 'member_requests_pagelet')]//div/div/ul[contains(@class, 'uiList')]/li[not(@class)]/div[contains(@direction, 'left') or contains(@direction, 'right')]/div/div/div/div[last()]/ul/li[not(i)]/ancestor::li[not(@class)]/div", document)
     }
 
     getList(xPath) {
@@ -286,6 +284,8 @@ class Parser extends CommonParser{
         let record = new Record,
             dom = this.getHTMLFromString(htmlString),
             showMoreExist = false;
+
+        console.log('dom', dom);
 
         const name = document.evaluate("normalize-space(//a[contains(@data-hovercard, '/ajax/hovercard/user')]/text())", dom, null, XPathResult.STRING_TYPE, null).stringValue;
 

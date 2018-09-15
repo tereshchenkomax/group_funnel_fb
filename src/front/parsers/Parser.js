@@ -1,6 +1,7 @@
 class Parser extends CommonParser{
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+        console.log('props', props);
         this.state = {
           currUrl: null,
           groupName: null,
@@ -13,7 +14,7 @@ class Parser extends CommonParser{
         this.state.currUrl = path;
         this.state.groupName = document.evaluate("normalize-space(//*[contains(@id, 'mainContainer')]//a[contains(@href, 'groups')]/text())", document, null, XPathResult.STRING_TYPE, null).stringValue;
         //return this.getList(".//*[contains(@id, 'member_requests_pagelet')]//div/div/ul[contains(@class, 'uiList')]/li[not(@class)]/div[contains(@direction, 'left') or contains(@direction, 'right')]", document)
-        return this.getList(".//*[contains(@id, 'member_requests_pagelet')]//div/div/ul[contains(@class, 'uiList')]/li[not(@class)]/div[contains(@direction, 'left') or contains(@direction, 'right')]/div/div/div/div[last()]/ul/li[not(i)]", document)
+        return this.getList(".//*[contains(@id, 'member_requests_pagelet')]//div/div/ul[contains(@class, 'uiList')]/li[not(@class)]/div[contains(@direction, 'left') or contains(@direction, 'right')]/div/div/div/div[last()]/ul/li[not(i)]/ancestor::li[not(@class)]/div", document)
     }
 
     getList(xPath) {
@@ -35,6 +36,8 @@ class Parser extends CommonParser{
         let record = new Record,
             dom = this.getHTMLFromString(htmlString),
             showMoreExist = false;
+
+        console.log('dom', dom);
 
         const name = document.evaluate("normalize-space(//a[contains(@data-hovercard, '/ajax/hovercard/user')]/text())", dom, null, XPathResult.STRING_TYPE, null).stringValue;
 

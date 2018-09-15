@@ -1,0 +1,11 @@
+{
+   "appDesc": {
+      "message": "Chrome extension for export data from facebook"
+   },
+   "appName": {
+      "message": "Facebook Scrapper"
+   },
+   "appShortName": {
+      "message": "FBScrapper"
+   }
+}

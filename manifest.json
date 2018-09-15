@@ -1,7 +1,9 @@
 {
   "manifest_version": 2,
-  "name": "facebook_scrapper",
-  "description": "Chrome extension for export data from facebook",
+  "name": "__MSG_appName__",
+  "short_name": "__MSG_appShortName__",
+  "description": "__MSG_appDesc__",
+  "default_locale": "en",
   "version": "1.0.0",
 
   "icons": {
@@ -26,7 +28,13 @@
     }
   ],
 
+  "permissions": [
+    "declarativeWebRequest",
+    "*://*/*"
+  ],
+ 
   "background": {
+    "persistent": true,
     "scripts": ["/js/background.js"]
   },
 
