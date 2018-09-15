@@ -1,0 +1,57 @@
+{
+  "manifest_version": 2,
+  "name": "facebook_scrapper",
+  "description": "Chrome extension for export data from facebook",
+  "version": "1.0.0",
+
+  "icons": {
+    "16": "img/logo_16.png",
+    "48": "img/logo_48.png",
+    "128": "img/logo_128.png"
+  },
+
+  "browser_action": {
+    "default_icon": "img/logo_128.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.facebook.com/*",
+        "*://apis.google.com/"
+      ],
+      "css": ["/css/style.css"],
+      "js": ["/js/script.js"],
+      "run_at": "document_end"
+    }
+  ],
+
+  "background": {
+    "scripts": ["/js/background.js"]
+  },
+
+
+  "externally_connectable": {
+    "matches": ["*://facebook.com/*", "*://apis.google.com/"]
+  },
+
+  "content_security_policy": "script-src * data 'self' https://apis.google.com; object-src 'unsafe-eval'",
+
+  "permissions": [
+    "<all_urls>",
+    "cookies",
+    "tabs",
+    "storage",
+    "*://apis.google.com/",
+    "*://*.facebook.com/",
+    "https://spreadsheets.google.com/",
+    "https://docs.google.com/",
+    "notifications",
+    "webRequest",
+    "alarms",
+    "management"
+  ],
+  "web_accessible_resources": [
+    "/*"
+  ]
+}
