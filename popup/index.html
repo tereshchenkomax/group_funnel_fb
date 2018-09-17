@@ -1,0 +1,45 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>FacebookScrapper</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <link rel="stylesheet" href="./bulma.min.css" media="all">
+        <link rel="stylesheet" href="./popup.css" media="all">
+    </head>
+    <body class="popup">
+      <div class="columns">
+        <div class="column">
+          <div class="bd-callout is-primary">
+            <form id="settings">
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="entities" value="all" checked="checked">
+                  Upload all entities
+                </label>
+                <label class="radio">
+                  <input type="radio" name="entities" value="onlyWitnAnswer">
+                  Upload only entites with answer/question
+                </label>
+              </div>
+            </form>
+            <button class="button is-success is-inverted is-outlined" id="saveSettings">Save Settings</button>
+          </div>
+        </div>
+      </div>
+      <div class="columns">
+        <div class="column">
+          <div class="bd-callout is-primary">
+            <div class="buttons">
+              <button class="button is-info is-inverted is-outlined" id="getEntities">Get entities</button>
+              <button class="button is-success is-inverted is-outlined" id="upload">Upload</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </body>
+    <script type="text/javascript" src="./popup.js" ></script>
+</html>

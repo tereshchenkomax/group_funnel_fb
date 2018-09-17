@@ -183,23 +183,20 @@ answerRecord.prototype.toObject = function () {
 	//document.body.dataset.new_full_url = chrome.extension.getURL('salestools.html#' + document.location);
 	var activeHash;
 
-	function run(url) {
-      parse(url);
+	function run({url, params={}}) {
+      parse(url, params);
 	};
 
-	function parse(url) {
-		var parser = new Parser();
+	function parse(url, params) {
+		var parser = new Parser(params);
 		var data = parser.runParse(url, document);
 
-		data.then(data => {
-      console.log('data.length', data.length);
-      chrome.runtime.sendMessage({ "message": "SEND_DATA", data })
-    });
+		data.then(data => chrome.runtime.sendMessage({ "message": "SEND_DATA", data }));
 	}
 
 	chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 		if (request.message === "run") {
-			run(request.url);
+			run({url: request.url, params: request.params });
 		}
 		if (request.message === "target_tab") {
 			activeHash = request.activeHash
@@ -249,32 +246,51 @@ class CommonParser {
 class Parser extends CommonParser{
     constructor(props) {
         super(props);
-        console.log('props', props);
         this.state = {
-          currUrl: null,
+          allEntites: null,
+          allEntitesCount: 0,
+          currUrl: window.location.href,
           groupName: null,
+          params: {...props},
           contacts:{}
         };
     }
 
     runParse(path) {
-
-        this.state.currUrl = path;
+      return new Promise((resolve, reject) => {
+        let allEntites;
+        if (!this.state.currUrl && !!path){
+          this.state.currUrl = path;
+        }
+        this.state.allEntitesCount = document.evaluate("normalize-space(//*[contains(@id, 'member_requests_pagelet')]//div[contains(@direction, 'left')]/div/div/span)", document, null, XPathResult.STRING_TYPE, null).stringValue;
+        this.state.allEntitesCount = parseInt(this.state.allEntitesCount.replace(/\D/g,''));
         this.state.groupName = document.evaluate("normalize-space(//*[contains(@id, 'mainContainer')]//a[contains(@href, 'groups')]/text())", document, null, XPathResult.STRING_TYPE, null).stringValue;
-        //return this.getList(".//*[contains(@id, 'member_requests_pagelet')]//div/div/ul[contains(@class, 'uiList')]/li[not(@class)]/div[contains(@direction, 'left') or contains(@direction, 'right')]", document)
-        return this.getList(".//*[contains(@id, 'member_requests_pagelet')]//div/div/ul[contains(@class, 'uiList')]/li[not(@class)]/div[contains(@direction, 'left') or contains(@direction, 'right')]/div/div/div/div[last()]/ul/li[not(i)]/ancestor::li[not(@class)]/div", document)
+        allEntites = this.getElementsByXPath(".//*[contains(@id, 'member_requests_pagelet')]//div/div/ul[contains(@class, 'uiList')]/li[not(@class)]/div[contains(@direction, 'left') or contains(@direction, 'right')]", document)
+
+        const intervalId = setInterval(() => {
+          window.scrollTo(0,document.body.scrollHeight);
+          allEntites = this.getElementsByXPath(".//*[contains(@id, 'member_requests_pagelet')]//div/div/ul[contains(@class, 'uiList')]/li[not(@class)]/div[contains(@direction, 'left') or contains(@direction, 'right')]", document)
+          if(allEntites.length === this.state.allEntitesCount) {
+            clearTimeout(intervalId);
+            if(!this.state.params.entities || this.state.params.entities == 'all'){
+              resolve(this.getList(".//*[contains(@id, 'member_requests_pagelet')]//div/div/ul[contains(@class, 'uiList')]/li[not(@class)]/div[contains(@direction, 'left') or contains(@direction, 'right')]", document));
+            }
+            resolve(this.getList(".//*[contains(@id, 'member_requests_pagelet')]//div/div/ul[contains(@class, 'uiList')]/li[not(@class)]/div[contains(@direction, 'left') or contains(@direction, 'right')]/div/div/div/div[last()]/ul/li[not(i)]/ancestor::li[not(@class)]/div", document));
+          };
+        }, 1500)
+      });
     }
 
-    getList(xPath) {
-      return new Promise((resolve, reject) => {
-        let entities = this.getElementsByXPath(xPath, document);
-        let result = [];
-        entities.forEach((entity, idx, array) => {
-          this.parseProfile({htmlString:entity.innerHTML})
-            .then(record => { return result.push(record) })
-            .catch(err => { return reject(err); });
-        });
-        resolve(result);
+  getList(xPath) {
+    return new Promise((resolve, reject) => {
+      let entities = this.getElementsByXPath(xPath, document);
+      let result = [];
+      entities.forEach((entity, idx, array) => {
+        this.parseProfile({htmlString:entity.innerHTML})
+          .then(record => { return result.push(record) })
+          .catch(err => { return reject(err); });
+      });
+      resolve(result);
     });
   }
 
@@ -285,17 +301,15 @@ class Parser extends CommonParser{
             dom = this.getHTMLFromString(htmlString),
             showMoreExist = false;
 
-        console.log('dom', dom);
-
         const name = document.evaluate("normalize-space(//a[contains(@data-hovercard, '/ajax/hovercard/user')]/text())", dom, null, XPathResult.STRING_TYPE, null).stringValue;
 
         record.setName(name);
 
         record.setGroupName(this.state.groupName)
 
-        const groupId = this.state.currUrl.match(/groups\/(\w+)(\/|$)/);
+        // const groupId = this.state.currUrl.match(/groups\/(\w+)(\/|$)/);
 
-        record.setGroup(groupId[1])
+        // record.setGroup(groupId[1])
 
         const userId = document.evaluate("normalize-space(//a[contains(@data-hovercard, '/ajax/hovercard/user')]/@uid)", dom, null, XPathResult.STRING_TYPE, null).stringValue;
 
@@ -305,9 +319,9 @@ class Parser extends CommonParser{
 
         record.setProfileUrl('https://www.facebook.com'+profileUrl)
 
-        const avatarImage = document.evaluate("normalize-space(//a[contains(@data-hovercard, '/ajax/hovercard/user')]/img/@src)", dom, null, XPathResult.STRING_TYPE, null).stringValue;
+        // const avatarImage = document.evaluate("normalize-space(//a[contains(@data-hovercard, '/ajax/hovercard/user')]/img/@src)", dom, null, XPathResult.STRING_TYPE, null).stringValue;
 
-        record.setAvatarImage(avatarImage)
+        // record.setAvatarImage(avatarImage)
 
         const answersRaw = this.getElementsByXPath(".//body/div/div/div/div[last()]/ul/li[not(i)]", dom);
 

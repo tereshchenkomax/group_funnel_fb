@@ -1,0 +1,36 @@
+.popup{
+  padding: 0;
+  width: 400px;
+  height: 225px;
+  background-color: #29487d;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.popup .control .radio{
+  margin-left: 0!important;
+}
+
+.popup .control{
+  margin-bottom: 16px;
+}
+
+.bd-callout.is-primary {
+  background-color: #4267b2;
+  color: #fff;
+  border-radius: 0;
+  padding: 1.25rem 2.5rem 1.25rem 1.5rem;
+  position: relative;
+}
+
+.columns {
+  margin-bottom: 0!important;
+  margin-top: 0!important;
+  width: 100%!important;
+}
+
+.columns .column {
+  padding: 0!important;
+}

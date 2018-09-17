@@ -16,6 +16,10 @@
     "default_icon": "img/logo_128.png"
   },
 
+  "browser_action": {
+    "default_popup": "popup/index.html"
+  },
+
   "content_scripts": [
     {
       "matches": [
@@ -28,11 +32,6 @@
     }
   ],
 
-  "permissions": [
-    "declarativeWebRequest",
-    "*://*/*"
-  ],
- 
   "background": {
     "persistent": true,
     "scripts": ["/js/background.js"]
@@ -42,8 +41,6 @@
   "externally_connectable": {
     "matches": ["*://facebook.com/*", "*://apis.google.com/"]
   },
-
-  "content_security_policy": "script-src * data 'self' https://apis.google.com; object-src 'unsafe-eval'",
 
   "permissions": [
     "<all_urls>",
@@ -57,7 +54,10 @@
     "notifications",
     "webRequest",
     "alarms",
-    "management"
+    "identity",
+    "management",
+    "declarativeWebRequest",
+    "*://*/*"
   ],
   "web_accessible_resources": [
     "/*"

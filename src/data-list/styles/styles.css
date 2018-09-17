@@ -3,3 +3,22 @@
   align-items: center;
 }
 
+.top-row{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  padding: 0 8px;
+}
+.top-row .span{
+
+}
+.top-row .input{
+  margin: 0 8px;
+}
+.top-row > .button{
+
+}
+.data-list-app{
+  padding-top:  16px;
+}
