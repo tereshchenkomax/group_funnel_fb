@@ -30,7 +30,10 @@ class App extends Component {
       grid: [],
       spreadsheetsUrl: 'https://docs.google.com/spreadsheets/d/19yEDYA2cOGqfFJmVlUimfdv8WGvvVMokxGGE-_je7Ps/edit#gid=0'
     }
-    chrome.runtime.sendMessage({message: 'GET_DATA'}, (data) => {
+    chrome.runtime.sendMessage({message: 'GET_DATA'}, (rProps) => {
+      console.log('rProps', rProps);
+      const { data, params } = rProps;
+
       let grid = [];
       let labels = {};
       let labelsArr = [];
@@ -61,25 +64,30 @@ class App extends Component {
 
       grid.unshift(labelsArr);
       this.setState({grid});
+      if(!!params.stylesheetUrl){
+        this.setState({ grid ,spreadsheetsUrl:params.stylesheetUrl });
+      }else{
+        this.setState({ grid });
+      }
     });
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-      console.log('request', request);
+      if(request.message === "UPLOAD_TO_G_SPREADSHEETS"){
+        this.uploadToGSpreadsheet().then(res => chrome.runtime.sendMessage({ message: 'CLOSE_PAGE' }));
+      };
     });
   }
   uploadToGSpreadsheet(){
     let { grid, spreadsheetsUrl } = this.state;
     grid.splice(0, 1);
     const data = grid.map(item => item.map(k => k.value));
-    axios.post(`${serverUrl}/resendToSpreadSheets`, {
+    return axios.post(`${serverUrl}/resendToSpreadSheets`, {
       spreadsheetsUrl,
       data
     })
-    .then(function (response) {
-      chrome.runtime.sendMessage({message: 'OPEN_PAGE', url: spreadsheetsUrl});
+    .then((response) => {
+      return chrome.runtime.sendMessage({message: 'OPEN_PAGE', url: spreadsheetsUrl})
     })
-    .catch(function (error) {
-      console.log(error);
-    });
+    .catch( (error) => console.log(error) );
   }
   render () {
     const { grid, spreadsheetsUrl } = this.state;

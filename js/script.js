@@ -187,17 +187,23 @@ answerRecord.prototype.toObject = function () {
       parse(url, params);
 	};
 
-	function parse(url, params) {
+  function run_n_upload({url, params={}}) {
+      parse(url, params, 'ACTION::SEND_DATA:BACKGROUND');
+  };
+
+	function parse(url, params, message='SEND_DATA') {
 		var parser = new Parser(params);
 		var data = parser.runParse(url, document);
-
-		data.then(data => chrome.runtime.sendMessage({ "message": "SEND_DATA", data }));
+		data.then(data => chrome.runtime.sendMessage({ message, data }));
 	}
 
 	chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 		if (request.message === "run") {
 			run({url: request.url, params: request.params });
 		}
+    if (request.message === "run:upload") {
+      run_n_upload({url: request.url, params: request.params });
+    }
 		if (request.message === "target_tab") {
 			activeHash = request.activeHash
 		}

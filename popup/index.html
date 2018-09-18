@@ -17,14 +17,20 @@
             <form id="settings">
               <div class="control">
                 <label class="radio">
-                  <input type="radio" name="entities" value="all" checked="checked">
-                  Upload all entities
+                  <input type="radio" name="entities" id="all" value="all" checked="checked">
+                  <span class="radio-label">Upload all entities</span>
                 </label>
                 <label class="radio">
-                  <input type="radio" name="entities" value="onlyWitnAnswer">
-                  Upload only entites with answer/question
+                  <input type="radio" name="entities" id="onlyWitnAnswer" value="onlyWitnAnswer">
+                  <span class="radio-label">Upload only entites with answer/question</span>
                 </label>
               </div>
+              <input class="input"
+                     type="text"
+                     name="stylesheetUrl"
+                     id="stylesheetUrl"
+                     placeholder="https://docs.google.com/spreadsheets/d/${spreadsheetsID}/edit#gid=0"
+              />
             </form>
             <button class="button is-success is-inverted is-outlined" id="saveSettings">Save Settings</button>
           </div>
@@ -35,7 +41,7 @@
           <div class="bd-callout is-primary">
             <div class="buttons">
               <button class="button is-info is-inverted is-outlined" id="getEntities">Get entities</button>
-              <button class="button is-success is-inverted is-outlined" id="upload">Upload</button>
+              <button class="button is-success is-inverted is-outlined" id="upload">Upload to Google Spreadsheet</button>
             </div>
           </div>
         </div>
