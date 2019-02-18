@@ -26,6 +26,7 @@ chrome.runtime.onMessage.addListener(
     switch (request.message) {
       case 'ACTION::SAVE_PARAMS':
         params = request.params;
+        setParams(params);
         break;
       case 'ACTION::RUN':
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -35,6 +36,7 @@ chrome.runtime.onMessage.addListener(
               url: tabs[0].url,
               params: request.params
             };
+
             if(targetTab != undefined){
                 data['activeHash'] = activeHash;
             }
@@ -52,6 +54,7 @@ chrome.runtime.onMessage.addListener(
               url: tabs[0].url,
               params: request.params
             };
+            setParams(request.params);
             if(targetTab != undefined){
                 data['activeHash'] = activeHash;
             }
@@ -83,7 +86,7 @@ chrome.runtime.onMessage.addListener(
         sendResponse({data, params})
         break;
       case 'GET_PARAMS':
-        sendResponse(params);
+        sendResponse({params});
         break;
       case 'ACTION::SAVE_PARAMS':
         params = request.params;

@@ -55,6 +55,7 @@
     "webRequest",
     "alarms",
     "identity",
+    "identity.email",
     "management",
     "declarativeWebRequest",
     "*://*/*"

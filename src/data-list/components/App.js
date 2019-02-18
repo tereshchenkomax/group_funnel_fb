@@ -7,11 +7,9 @@ import 'react-datasheet/lib/react-datasheet.css'
 import axios from 'axios'
 import DataExport from './DataExport'
 
-import 'styles/styles.css'
+import '../../styles/styles.css'
 
-const serverUrl = 'http://109.234.37.128:3000'
-//for develop
-//const serverUrl = 'http://localhost:3000'
+import { serverUrl } from '../../config';
 
 const labelsMap = {
   //group: 'group Id',
@@ -28,10 +26,9 @@ class App extends Component {
     super(props)
     this.state = {
       grid: [],
-      spreadsheetsUrl: 'https://docs.google.com/spreadsheets/d/19yEDYA2cOGqfFJmVlUimfdv8WGvvVMokxGGE-_je7Ps/edit#gid=0'
+      spreadsheetsUrl: ''
     }
     chrome.runtime.sendMessage({message: 'GET_DATA'}, (rProps) => {
-      console.log('rProps', rProps);
       const { data, params } = rProps;
 
       let grid = [];

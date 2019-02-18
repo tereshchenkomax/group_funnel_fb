@@ -94,6 +94,38 @@ class Parser extends CommonParser{
 
         record.setAnswers(answers);
 
+        const additionalRaw = this.getElementsByXPath(".//body/div/div/div/div/ul/li/i/..", dom);
+
+        console.log('additionalRaw', additionalRaw);
+
+        additionalRaw.forEach((i, idx, array) => {
+            let additionalDom = this.getHTMLFromString(i.innerHTML);
+            const tryTime = document.evaluate("normalize-space(//span/text())", additionalDom, null, XPathResult.STRING_TYPE, null).stringValue;
+
+            if (!!tryTime && !!tryTime.match && tryTime.match(/20\w+($|\s)/)) {
+              record.setJoinedFacebookOn(tryTime);
+            }
+
+            const city = document.evaluate("normalize-space(//span/a[contains(@href, 'facebook.com/pages/')]/text())", additionalDom, null, XPathResult.STRING_TYPE, null).stringValue;
+
+            if (!!city) {
+              record.setFrom(city);
+              record.setLivesIn(city);
+            }
+
+            const work = document.evaluate("normalize-space(//span/a[not(contains(@href, 'facebook.com/pages/'))]/text())", additionalDom, null, XPathResult.STRING_TYPE, null).stringValue;
+
+            if (!!work) {
+              record.setWorksAt(work);
+            }
+
+            const studiedAt = document.evaluate("normalize-space(//span/a[not(contains(@href, 'facebook.com/pages/'))]/text())", dom, null, XPathResult.STRING_TYPE, null).stringValue;
+
+            if (!!studiedAt) {
+              record.setStudiedAt(studiedAt);
+            }
+        });
+
         resolve(record.toObject());
       } catch(err) {
         console.log(err);

@@ -8,10 +8,16 @@ module.exports = {
   basePath: __dirname,
   /** The name of the directory containing the application source code */
   srcDir: './src/data-list',
+
+  popupDir: './src/popup',
   /** The file name of the plugin's entry point */
   main: 'index.js',
 
+  popup: 'popup.js',
+
   outDir: './data-list',
+
+  outPopupDir: './popup',
   /** The base path for all projects assets (relative to the website root) */
   publicPath: PUB_PATH,
   /** Whether to generate sourcemaps */

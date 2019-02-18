@@ -26,6 +26,29 @@ function Record() {
     this.answers = answers;
   };
 
+  this.setJoinedFacebookOn = function (joined) {
+    this.joinedFacebookOn = joined;
+  };
+
+  this.setFrom = function (from) {
+    this.from = from;
+  };
+
+  this.setLivesIn = function (livesIn) {
+    this.livesIn = livesIn;
+  };
+
+  this.setWorksAt = function (worksAt) {
+    this.worksAt = worksAt;
+  };
+
+  this.setWentTo = function (wentTo) {
+    this.wentTo = wentTo;
+  };
+
+  this.setStudiedAt = function (studiedAt) {
+    this.studiedAt = studiedAt;
+  };
 }
 
 Record.prototype.toObject = function () {
@@ -37,5 +60,11 @@ Record.prototype.toObject = function () {
     profileUrl: this.profileUrl,
     avatarImage: this.avatarImage,
     answers: this.answers,
+    joinedFacebookOn: this.joinedFacebookOn,
+    from: this.from,
+    livesIn: this.livesIn,
+    worksAt: this.worksAt,
+    wentTo: this.wentTo,
+    studiedAt: this.studiedAt,
   };
 };

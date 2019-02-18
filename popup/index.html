@@ -10,42 +10,7 @@
         <link rel="stylesheet" href="./bulma.min.css" media="all">
         <link rel="stylesheet" href="./popup.css" media="all">
     </head>
-    <body class="popup">
-      <div class="columns">
-        <div class="column">
-          <div class="bd-callout is-primary">
-            <form id="settings">
-              <div class="control">
-                <label class="radio">
-                  <input type="radio" name="entities" id="all" value="all" checked="checked">
-                  <span class="radio-label">Upload all entities</span>
-                </label>
-                <label class="radio">
-                  <input type="radio" name="entities" id="onlyWitnAnswer" value="onlyWitnAnswer">
-                  <span class="radio-label">Upload only entites with answer/question</span>
-                </label>
-              </div>
-              <input class="input"
-                     type="text"
-                     name="stylesheetUrl"
-                     id="stylesheetUrl"
-                     placeholder="https://docs.google.com/spreadsheets/d/${spreadsheetsID}/edit#gid=0"
-              />
-            </form>
-            <button class="button is-success is-inverted is-outlined" id="saveSettings">Save Settings</button>
-          </div>
-        </div>
-      </div>
-      <div class="columns">
-        <div class="column">
-          <div class="bd-callout is-primary">
-            <div class="buttons">
-              <button class="button is-info is-inverted is-outlined" id="getEntities">Get entities</button>
-              <button class="button is-success is-inverted is-outlined" id="upload">Upload to Google Spreadsheet</button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <body id="popup" class="popup">
     </body>
     <script type="text/javascript" src="./popup.js" ></script>
 </html>
