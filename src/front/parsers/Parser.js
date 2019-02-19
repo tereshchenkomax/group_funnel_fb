@@ -96,8 +96,6 @@ class Parser extends CommonParser{
 
         const additionalRaw = this.getElementsByXPath(".//body/div/div/div/div/ul/li/i/..", dom);
 
-        console.log('additionalRaw', additionalRaw);
-
         additionalRaw.forEach((i, idx, array) => {
             let additionalDom = this.getHTMLFromString(i.innerHTML);
             const tryTime = document.evaluate("normalize-space(//span/text())", additionalDom, null, XPathResult.STRING_TYPE, null).stringValue;
