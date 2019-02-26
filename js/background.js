@@ -37,6 +37,9 @@ chrome.runtime.onMessage.addListener(
               params: request.params
             };
 
+            params = request.params;
+            setParams(params);
+
             if(targetTab != undefined){
                 data['activeHash'] = activeHash;
             }
@@ -44,7 +47,7 @@ chrome.runtime.onMessage.addListener(
         });
         break;
       case 'CLOSE_PAGE':
-        chrome.tabs.remove(middlewarePageId);
+        //chrome.tabs.remove(middlewarePageId);
         break;
       case 'ACTION::SEND_DATA':
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -54,10 +57,14 @@ chrome.runtime.onMessage.addListener(
               url: tabs[0].url,
               params: request.params
             };
-            setParams(request.params);
+
+            params = request.params;
+            setParams(params);
+
             if(targetTab != undefined){
                 data['activeHash'] = activeHash;
             }
+
             sendMessage(data);
         });
         break;
@@ -67,12 +74,14 @@ chrome.runtime.onMessage.addListener(
           chrome.tabs.create({ url: newURL }, ({ id, url }) => {
             middlewarePageId = id;
             middlewarePageUrl = url;
-            setTimeout(() => chrome.tabs.sendMessage(id, { message: "UPLOAD_TO_G_SPREADSHEETS" }), 1000)
+            setTimeout(() => chrome.tabs.sendMessage(id, { message: "UPLOAD_TO_G_SPREADSHEETS" }), 500)
           });
         break;
       case 'SEND_DATA':
         //console.log(request.url);
         data = request.data;
+        params = request.params;
+        setParams(params);
         var newURL = '/data-list/index.html';
         chrome.tabs.create({ url: newURL }, ({ id, url }) => {
           middlewarePageId = id;

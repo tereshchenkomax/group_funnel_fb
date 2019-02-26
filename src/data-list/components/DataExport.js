@@ -14,7 +14,7 @@ class Download extends Component {
       let row = {};
       data[i].map(({value}, n) => {
         if(!!value){
-          if(groupName == 'Group name' && data[0][n].value == 'Group name') groupName = value;
+          if(groupName == 'Group name' && !!data[0][n] && data[0][n].value == 'Group name') groupName = value;
           if(!!data[0][n]) row[data[0][n].value] = value;
         }
       });

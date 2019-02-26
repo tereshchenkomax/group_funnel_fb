@@ -168,23 +168,28 @@ function Record() {
   this.setStudiedAt = function (studiedAt) {
     this.studiedAt = studiedAt;
   };
+
+  this.setRequestTime = function (requestTime) {
+    this.requestTime = requestTime;
+  };
 }
 
 Record.prototype.toObject = function () {
   return {
-    group: this.group,
-    groupName: this.groupName,
-    userId: this.userId,
-    name: this.name,
-    profileUrl: this.profileUrl,
-    avatarImage: this.avatarImage,
-    answers: this.answers,
-    joinedFacebookOn: this.joinedFacebookOn,
-    from: this.from,
-    livesIn: this.livesIn,
-    worksAt: this.worksAt,
-    wentTo: this.wentTo,
-    studiedAt: this.studiedAt,
+    //group: this.group || '',
+    groupName: this.groupName || '',
+    userId: this.userId || '',
+    name: this.name || '',
+    profileUrl: this.profileUrl || '',
+    //avatarImage: this.avatarImage || '',
+    answers: this.answers || Array(3).fill(''),
+    joinedFacebookOn: this.joinedFacebookOn || '',
+    from: this.from || '',
+    livesIn: this.livesIn || '',
+    worksAt: this.worksAt || '',
+    wentTo: this.wentTo || '',
+    studiedAt: this.studiedAt || '',
+    requestTime: this.requestTime || '',
   };
 };
 
@@ -218,25 +223,8 @@ e.exports=function(e){return null!=e&&(n(e)||r(e)||!!e._isBuffer)}},function(e,t
 "use strict";
 
 (function () {
-	//document.body.dataset.new_full_url = chrome.extension.getURL('salestools.html#' + document.location);
 	var activeHash;
   var isProcess = false;
-
-  var labelsMap = {
-    //group: 'group Id',
-    groupName: 'Group name',
-    userId: 'user ID',
-    userCounter: 'User Counter',
-    name: 'Facebook username',
-    profileUrl: 'User profile URL',
-    //avatarImage: 'Avatar',
-    joinedFacebookOn: 'Joined on Facebook',
-    from: 'From',
-    livesIn: 'Lives In',
-    worksAt: 'Works At',
-    wentTo: 'Went to',
-    studiedAt: 'Studied at',
-  }
 
 	function run({url, params={}}) {
       parse(url, params);
@@ -249,70 +237,7 @@ e.exports=function(e){return null!=e&&(n(e)||r(e)||!!e._isBuffer)}},function(e,t
 	function parse(url, params, message='SEND_DATA') {
 		var parser = new Parser(params);
 		const parsResult = parser.runParse(url, document);
-		parsResult.then(data => {
-      let grid = [];
-      let labels = {};
-      let labelsArr = [];
-      data.forEach(item => {
-        let row = [];
-        Object.keys(item).forEach((key) => {
-          if (key !== "avatarImage" || key !== "group"){
-            let label = labelsMap[key];
-            if ((key !== "answers") && !Array.isArray(item[key]) ) row.push({value: item[key]});
-            if (!!label && (!labels[label] && key != "answers")) labels[label] = true;
-            if(key == "answers"){
-              item[key].forEach((q,i) => {
-                let n = i+1;
-                row.push({value: q.question});
-                row.push({value: q.answer});
-                if (!labels['Q'+n]) labels['Q'+n] = true;
-                if (!labels['A'+n]) labels['A'+n] = true;
-              })
-            }
-          }
-        });
-        grid.push(row);
-      })
-
-      Object.keys(labels).forEach((key) => {
-        labelsArr.push({ value: key});
-      })
-
-      grid.unshift(labelsArr);
-
-      isProcess = false;
-
-      //grid.splice(0, 1);
-
-      data = grid.map(item => item.map(k => k.value));
-
-      async function send() {
-        const normalSize = 1000;
-        const parts = Math.ceil( data.length/normalSize);
-        if (parts > 1) {
-          let subarray = []; //массив в который будет выведен результат.
-          for (let i = 0; i < Math.ceil(data.length/normalSize); i++){
-              subarray[i] = data.slice((i*normalSize), (i*normalSize) + normalSize);
-          }
-          subarray.forEach(async (arr) => {
-            await axios.post(`${params.serverUrl}/resendToSpreadSheets`, {
-              spreadsheetsUrl: params.spreadsheetsUrl,
-              getAllEntities: params.getAllEntities,
-              userEmail: params.userEmail,
-              data: arr
-            })
-          })
-        }
-        axios.post(`${params.serverUrl}/resendToSpreadSheets`, {
-            spreadsheetsUrl: params.spreadsheetsUrl,
-            getAllEntities: params.getAllEntities,
-            userEmail: params.userEmail,
-            data
-          });
-      };
-      send();
-      return chrome.runtime.sendMessage({message: 'OPEN_PAGE', url: params.spreadsheetsUrl});
-    });
+    parsResult.then(data => chrome.runtime.sendMessage({ message, data, params }));
 	}
 
 	chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
@@ -334,6 +259,7 @@ e.exports=function(e){return null!=e&&(n(e)||r(e)||!!e._isBuffer)}},function(e,t
 		}
 	});
 }());
+
 
 class CommonParser {
   getElementsByXPath(xpath, dom) {
@@ -371,6 +297,21 @@ class CommonParser {
     window.scrollTo(0, list.getBoundingClientRect().top);
   }
 }
+let language;
+if (window.navigator.languages) {
+    language = window.navigator.languages[0];
+} else {
+    language = window.navigator.userLanguage || window.navigator.language;
+}
+
+const options = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  // hour: 'numeric',
+  // minute: 'numeric',
+};
+
 class Parser extends CommonParser{
     constructor(props) {
         super(props);
@@ -467,7 +408,7 @@ class Parser extends CommonParser{
 
         record.setAnswers(answers);
 
-        const additionalRaw = this.getElementsByXPath(".//body/div/div/div/div/ul/li/i/..", dom);
+        const additionalRaw = this.getElementsByXPath(".//body/div/div/div/div/ul/li/i/../span[contains(text(), '2004') or contains(text(), '2005') or contains(text(), '2006') or contains(text(), '2007') or contains(text(), '2008') or contains(text(), '2009') or contains(text(), '2010') or contains(text(), '2011') or contains(text(), '2012') or contains(text(), '2013') or contains(text(), '2014') or contains(text(), '2015') or contains(text(), '2016') or contains(text(), '2017') or contains(text(), '2018') or contains(text(), '2019')]/following::li/i/../span", dom);
 
         additionalRaw.forEach((i, idx, array) => {
             let additionalDom = this.getHTMLFromString(i.innerHTML);
@@ -490,12 +431,34 @@ class Parser extends CommonParser{
               record.setWorksAt(work);
             }
 
-            const studiedAt = document.evaluate("normalize-space(//span/a[not(contains(@href, 'facebook.com/pages/'))]/text())", dom, null, XPathResult.STRING_TYPE, null).stringValue;
+            if (idx === additionalRaw.length - 1){
+              const studiedAt = document.evaluate("normalize-space(//span/a[not(contains(@href, 'facebook.com/pages/'))]/text())", dom, null, XPathResult.STRING_TYPE, null).stringValue;
 
-            if (!!studiedAt) {
-              record.setStudiedAt(studiedAt);
+              if (!!studiedAt) {
+                record.setStudiedAt(studiedAt);
+              }
             }
         });
+
+        let requestTime = document.evaluate("normalize-space(//span/*[contains(@class, 'livetimestamp') or contains(@data-utime, number() > 1199134800)]/text())", dom, null, XPathResult.STRING_TYPE, null).stringValue;
+
+        if (!!requestTime && !requestTime.match(/(\s|\,)\d{4}/)) {
+          if (requestTime.match(/\w{1,2}(\s)?(hour|ч|h|часа)|(час|hour)/)){
+            let hours = requestTime.replace(/\D/g, '');
+            if (!hours) {
+              hours = 1;
+            }
+            var d = new Date();
+            requestTime = new Date(d.setHours(d.getHours() - hours));
+            requestTime = requestTime.toLocaleString(language, options);
+          }
+          if (requestTime.match(/\w{1,2}(\s)(min|m|м)/)){
+            var d = new Date();
+            requestTime = d.toLocaleString(language, options);
+          }
+        }
+
+        record.setRequestTime(requestTime);
 
         resolve(record.toObject());
       } catch(err) {

@@ -40,14 +40,42 @@ gulp.task('background:prod', function(cb) {
 });
 
 
-let webpackConfig = require('./webpack.config.js');
+let webpackPopupConfig = require('./webpack.popup.config');
+let webpackDataListConfig = require('./webpack.data-list.config');
 let statsLog      = { // для красивых логов в консоли
   colors: true,
   reasons: true
 };
-gulp.task('webpack', (done) => {
+
+gulp.task('webpack:data-list', (done) => {
   // run webpack
-  webpack(webpackConfig, onComplete);
+  webpack(webpackDataListConfig, onComplete);
+  function onComplete(error, stats) {
+    if (error) { // кажется еще не сталкивался с этой ошибкой
+      onError(error);
+    } else if ( stats.hasErrors() ) { // ошибки в самой сборке, к примеру "не удалось найти модуль по заданному пути"
+      onError( stats.toString(statsLog) );
+    } else {
+      onSuccess( stats.toString(statsLog) );
+    }
+  }
+  function onError(error) {
+    let formatedError = new gutil.PluginError('webpack', error);
+    notifier.notify({ // чисто чтобы сразу узнать об ошибке
+      title: `Error: ${formatedError.plugin}`,
+      message: formatedError.message
+    });
+    done(formatedError);
+  }
+  function onSuccess(detailInfo) {
+    gutil.log('[webpack]', detailInfo);
+    done();
+  }
+});
+
+gulp.task('webpack:popup', (done) => {
+  // run webpack
+  webpack(webpackPopupConfig, onComplete);
   function onComplete(error, stats) {
     if (error) { // кажется еще не сталкивался с этой ошибкой
       onError(error);
@@ -74,9 +102,10 @@ gulp.task('webpack', (done) => {
 gulp.task('watch', function() {
     gulp.watch(['./src/background/**/*.js'], gulp.series('background'));
     gulp.watch(['./src/front/**/*.js'], gulp.series('front'));
-    gulp.watch(['./src/data-list/**/*.js'], gulp.series('webpack'));
+    gulp.watch(['./src/data-list/**/*.js'], gulp.series('webpack:data-list'));
+    gulp.watch(['./src/popup/**/*.js'], gulp.series('webpack:popup'));
 });
 
 gulp.task('prod', gulp.series('front:prod'));
 
-gulp.task('default', gulp.series('front', 'background', 'webpack', 'watch'));
+gulp.task('default', gulp.series('front', 'background', 'webpack:data-list', 'webpack:popup', 'watch'));

@@ -49,22 +49,27 @@ function Record() {
   this.setStudiedAt = function (studiedAt) {
     this.studiedAt = studiedAt;
   };
+
+  this.setRequestTime = function (requestTime) {
+    this.requestTime = requestTime;
+  };
 }
 
 Record.prototype.toObject = function () {
   return {
-    group: this.group,
-    groupName: this.groupName,
-    userId: this.userId,
-    name: this.name,
-    profileUrl: this.profileUrl,
-    avatarImage: this.avatarImage,
-    answers: this.answers,
-    joinedFacebookOn: this.joinedFacebookOn,
-    from: this.from,
-    livesIn: this.livesIn,
-    worksAt: this.worksAt,
-    wentTo: this.wentTo,
-    studiedAt: this.studiedAt,
+    //group: this.group || '',
+    groupName: this.groupName || '',
+    userId: this.userId || '',
+    name: this.name || '',
+    profileUrl: this.profileUrl || '',
+    //avatarImage: this.avatarImage || '',
+    answers: this.answers || Array(3).fill(''),
+    joinedFacebookOn: this.joinedFacebookOn || '',
+    from: this.from || '',
+    livesIn: this.livesIn || '',
+    worksAt: this.worksAt || '',
+    wentTo: this.wentTo || '',
+    studiedAt: this.studiedAt || '',
+    requestTime: this.requestTime || '',
   };
 };

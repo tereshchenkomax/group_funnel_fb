@@ -4,7 +4,7 @@
   "short_name": "__MSG_appShortName__",
   "description": "__MSG_appDesc__",
   "default_locale": "en",
-  "version": "1.0.0",
+  "version": "1.6.1",
 
   "icons": {
     "16": "img/logo_16.png",
@@ -42,6 +42,8 @@
     "matches": ["*://facebook.com/*", "*://apis.google.com/"]
   },
 
+  "content_security_policy":"script-src 'self' https://apis.google.com; object-src 'self'",
+
   "permissions": [
     "<all_urls>",
     "cookies",
@@ -57,7 +59,6 @@
     "identity",
     "identity.email",
     "management",
-    "declarativeWebRequest",
     "*://*/*"
   ],
   "web_accessible_resources": [

@@ -1,3 +1,18 @@
+let language;
+if (window.navigator.languages) {
+    language = window.navigator.languages[0];
+} else {
+    language = window.navigator.userLanguage || window.navigator.language;
+}
+
+const options = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  // hour: 'numeric',
+  // minute: 'numeric',
+};
+
 class Parser extends CommonParser{
     constructor(props) {
         super(props);
@@ -94,7 +109,7 @@ class Parser extends CommonParser{
 
         record.setAnswers(answers);
 
-        const additionalRaw = this.getElementsByXPath(".//body/div/div/div/div/ul/li/i/..", dom);
+        const additionalRaw = this.getElementsByXPath(".//body/div/div/div/div/ul/li/i/../span[contains(text(), '2004') or contains(text(), '2005') or contains(text(), '2006') or contains(text(), '2007') or contains(text(), '2008') or contains(text(), '2009') or contains(text(), '2010') or contains(text(), '2011') or contains(text(), '2012') or contains(text(), '2013') or contains(text(), '2014') or contains(text(), '2015') or contains(text(), '2016') or contains(text(), '2017') or contains(text(), '2018') or contains(text(), '2019')]/following::li/i/../span", dom);
 
         additionalRaw.forEach((i, idx, array) => {
             let additionalDom = this.getHTMLFromString(i.innerHTML);
@@ -117,12 +132,34 @@ class Parser extends CommonParser{
               record.setWorksAt(work);
             }
 
-            const studiedAt = document.evaluate("normalize-space(//span/a[not(contains(@href, 'facebook.com/pages/'))]/text())", dom, null, XPathResult.STRING_TYPE, null).stringValue;
+            if (idx === additionalRaw.length - 1){
+              const studiedAt = document.evaluate("normalize-space(//span/a[not(contains(@href, 'facebook.com/pages/'))]/text())", dom, null, XPathResult.STRING_TYPE, null).stringValue;
 
-            if (!!studiedAt) {
-              record.setStudiedAt(studiedAt);
+              if (!!studiedAt) {
+                record.setStudiedAt(studiedAt);
+              }
             }
         });
+
+        let requestTime = document.evaluate("normalize-space(//span/*[contains(@class, 'livetimestamp') or contains(@data-utime, number() > 1199134800)]/text())", dom, null, XPathResult.STRING_TYPE, null).stringValue;
+
+        if (!!requestTime && !requestTime.match(/(\s|\,)\d{4}/)) {
+          if (requestTime.match(/\w{1,2}(\s)?(hour|ч|h|часа)|(час|hour)/)){
+            let hours = requestTime.replace(/\D/g, '');
+            if (!hours) {
+              hours = 1;
+            }
+            var d = new Date();
+            requestTime = new Date(d.setHours(d.getHours() - hours));
+            requestTime = requestTime.toLocaleString(language, options);
+          }
+          if (requestTime.match(/\w{1,2}(\s)(min|m|м)/)){
+            var d = new Date();
+            requestTime = d.toLocaleString(language, options);
+          }
+        }
+
+        record.setRequestTime(requestTime);
 
         resolve(record.toObject());
       } catch(err) {
