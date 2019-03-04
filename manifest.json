@@ -4,7 +4,7 @@
   "short_name": "__MSG_appShortName__",
   "description": "__MSG_appDesc__",
   "default_locale": "en",
-  "version": "1.6.1",
+  "version": "1.6.3",
 
   "icons": {
     "16": "img/logo_16.png",

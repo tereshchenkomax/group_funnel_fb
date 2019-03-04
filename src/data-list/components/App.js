@@ -43,25 +43,24 @@ class App extends Component {
         let newState;
         newState = {...newState, userEmail: userInfo.email};
 
-        return axios.get(`${serverUrl}/get_settings/${userInfo.email}`, {
-        })
-        .then(({data}) => {
-          const { settings } = data;
-          const { spreadsheetsUrl, getAllEntities } = settings;
-          if (spreadsheetsUrl){
-            newState = {...newState, spreadsheetsUrl};
-          }
-          if (getAllEntities){
-            newState = {...newState, getAllEntities};
-          }
-          this.setState({...newState});
-        })
-        .catch( (error) => {
+        return axios.get(`${serverUrl}/get_settings/${userInfo.email}`)
+          .then(({data}) => {
+            const { settings } = data;
+            const { spreadsheetsUrl, getAllEntities } = settings;
+            if (spreadsheetsUrl){
+              newState = {...newState, spreadsheetsUrl};
+            }
+            if (getAllEntities){
+              newState = {...newState, getAllEntities};
+            }
+            this.setState({...newState});
+          })
+          .catch( (error) => {
+            this.setState({...newState})
+          });
+        }else{
           this.setState({...newState})
-        });
-      }else{
-        this.setState({...newState})
-      }
+        }
     })
 
     chrome.runtime.sendMessage({message: 'GET_DATA'}, (rProps) => {

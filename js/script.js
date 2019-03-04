@@ -339,13 +339,13 @@ class Parser extends CommonParser{
         const intervalId = setInterval(() => {
           window.scrollTo(0,document.body.scrollHeight);
           allEntites = this.getElementsByXPath(".//*[contains(@id, 'member_requests_pagelet')]//div/div/ul[contains(@class, 'uiList')]/li[not(@class)]/div[contains(@direction, 'left') or contains(@direction, 'right')]", document)
-          if(allEntites.length === this.state.allEntitesCount) {
+          //if(allEntites.length === this.state.allEntitesCount) {
             clearTimeout(intervalId);
             if(!this.state.params.entities || this.state.params.entities == 'all'){
               resolve(this.getList(".//*[contains(@id, 'member_requests_pagelet')]//div/div/ul[contains(@class, 'uiList')]/li[not(@class)]/div[contains(@direction, 'left') or contains(@direction, 'right')]", document));
             }
             resolve(this.getList(".//*[contains(@id, 'member_requests_pagelet')]//div/div/ul[contains(@class, 'uiList')]/li[not(@class)]/div[contains(@direction, 'left') or contains(@direction, 'right')]/div/div/div/div[last()]/ul/li[not(i)]/ancestor::li[not(@class)]/div", document));
-          };
+          //};
         }, 1500)
       });
     }
@@ -405,6 +405,29 @@ class Parser extends CommonParser{
             resAnswer.setAnswer(answer);
             answers.push(resAnswer.toObject());
         });
+
+        let ifor = 0;
+        switch(answersRaw.length) {
+          case 0:
+            ifor = 3;
+          break;
+          case 1:
+            ifor = 2;
+          break;
+          case 2:
+            ifor = 1;
+          break;
+          case 3:
+            ifor = 0;
+          break;
+        }
+
+        for (var i = 0; i < ifor; i++) {
+          let resAnswer = new answerRecord;
+          resAnswer.setQuestion('');
+          resAnswer.setAnswer('');
+          answers.push(resAnswer.toObject());
+        }
 
         record.setAnswers(answers);
 
