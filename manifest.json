@@ -1,10 +1,12 @@
 {
+"update_url": "https://clients2.google.com/service/update2/crx",
+
   "manifest_version": 2,
   "name": "__MSG_appName__",
   "short_name": "__MSG_appShortName__",
   "description": "__MSG_appDesc__",
   "default_locale": "en",
-  "version": "1.6.3",
+  "version": "1.7.3",
 
   "icons": {
     "16": "img/logo_16.png",
@@ -37,6 +39,11 @@
     "scripts": ["/js/background.js"]
   },
 
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": false
+  },
+
 
   "externally_connectable": {
     "matches": ["*://facebook.com/*", "*://apis.google.com/"]
@@ -45,7 +52,6 @@
   "content_security_policy":"script-src 'self' https://apis.google.com; object-src 'self'",
 
   "permissions": [
-    "<all_urls>",
     "cookies",
     "tabs",
     "storage",
@@ -58,8 +64,7 @@
     "alarms",
     "identity",
     "identity.email",
-    "management",
-    "*://*/*"
+    "management"
   ],
   "web_accessible_resources": [
     "/*"

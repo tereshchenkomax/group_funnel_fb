@@ -1,5 +1,5 @@
-const NODE_ENV = process.env.NODE_ENV || 'development'
-const PUB_PATH = process.env.PUB_PATH || 'data-list'
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const PUB_PATH = process.env.PUB_PATH || 'data-list';
 
 module.exports = {
   /** The environment to use when building the project */
@@ -10,14 +10,14 @@ module.exports = {
   srcDir: './src/data-list',
 
   popupDir: './src/popup',
+  optionsDir: './src/options',
   /** The file name of the plugin's entry point */
   main: 'index.js',
-
   popup: 'popup.js',
-
+  options: 'options.js',
   outDir: './data-list',
-
   outPopupDir: './popup',
+  outOptionsDir: './options',
   /** The base path for all projects assets (relative to the website root) */
   publicPath: PUB_PATH,
   /** Whether to generate sourcemaps */
@@ -31,4 +31,4 @@ module.exports = {
   /** The list of modules to bundle separately from the core application code */
   vendors: [
   ],
-}
+};

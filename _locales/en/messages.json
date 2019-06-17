@@ -3,9 +3,9 @@
       "message": "Chrome extension for export data from facebook"
    },
    "appName": {
-      "message": "Facebook Scrapper"
+      "message": "Answers Extraction"
    },
    "appShortName": {
-      "message": "FBScrapper"
+      "message": "AnswersExtraction"
    }
 }
