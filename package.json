@@ -20,7 +20,7 @@
     "gulp": "4",
     "gulp-concat": "^2.6.1",
     "gulp-uglify": "^3.0.1",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.13",
     "node-sass": "^4.7.2",
     "react": "^16.2.0",
     "react-data-export": "^0.4.2",
